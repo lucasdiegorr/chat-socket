@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
 
 import com.lucasdiegorr.client.Client;
 
@@ -17,6 +18,7 @@ import javax.swing.JTextArea;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import javax.swing.ScrollPaneConstants;
 
 /**
  * @author Lucas Diego
@@ -51,6 +53,7 @@ public class ChatClient {
 	 * Create the application.
 	 */
 	public ChatClient() {
+		nickName = JOptionPane.showInputDialog(null, "Qual o seu nick?");
 		initialize();
 	}
 
@@ -59,7 +62,6 @@ public class ChatClient {
 	 */
 	private void initialize() {
 		
-		nickName = JOptionPane.showInputDialog(null, "Qual o seu nick?");
 		frame = new JFrame();
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
@@ -94,10 +96,17 @@ public class ChatClient {
 		frame.getContentPane().add(textToSend);
 		textToSend.setColumns(10);
 		
+		
 		textAreaChat = new JTextArea();
 		textAreaChat.setEditable(false);
+		textAreaChat.setVisible(true);
+		textAreaChat.setCaretPosition(textAreaChat.getDocument().getLength()); 
 		textAreaChat.setBounds(10, 11, 414, 202);
-		frame.getContentPane().add(textAreaChat);
+		
+		JScrollPane scrollPane = new JScrollPane(textAreaChat);
+		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);;
+		scrollPane.setBounds(10, 11, 414, 202);
+		frame.getContentPane().add(scrollPane);
 	}
 
 	public JTextArea getTextAreaChat() {

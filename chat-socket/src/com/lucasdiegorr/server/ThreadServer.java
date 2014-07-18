@@ -15,11 +15,13 @@ public class ThreadServer implements Runnable {
 	private Socket client;
 	private DataOutputStream writer;
 	private DataInputStream reader;
+	private int idClient;
 
 	public ThreadServer(Server server, Socket client) {
 
 		this.server = server;
 		this.client = client;
+		this.idClient = client.getPort();
 		try {
 			writer = new DataOutputStream(client.getOutputStream());
 			reader = new DataInputStream(client.getInputStream());
@@ -36,7 +38,8 @@ public class ThreadServer implements Runnable {
 		while (!this.client.isClosed()) {
 			try {
 				String fromClient;
-				while (((fromClient = reader.readUTF()) != null)) {
+				while (reader.available() != 0) {
+					fromClient = reader.readUTF();
 					System.out.println("Mensagem recebida do cliente: " + fromClient);
 					sendToAll(fromClient);
 				}
@@ -46,6 +49,8 @@ public class ThreadServer implements Runnable {
 		}
 		try {
 			client.close();
+			server.getListClient().remove(client);
+			sendToAll("O cliente" + this.idClient + " desconectou.");
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -53,7 +58,7 @@ public class ThreadServer implements Runnable {
 
 	private void sendToAll(String fromClient) {
 		for (Socket otherClient : this.server.getListClient()) {
-			if (!otherClient.equals(client)) {
+			if (otherClient.getPort() != this.idClient) {
 				try {
 					writer = new DataOutputStream(otherClient.getOutputStream());
 					writer.writeUTF(fromClient);

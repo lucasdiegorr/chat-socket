@@ -45,6 +45,7 @@ public class Client implements Runnable {
 				while ((fromServer = reader.readUTF()) != null) {
 					System.out.println("Mensagem do servidor: " + fromServer + "\n");
 					window.getTextAreaChat().append(fromServer);
+					window.getTextAreaChat().setCaretPosition(window.getTextAreaChat().getDocument().getLength());
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
