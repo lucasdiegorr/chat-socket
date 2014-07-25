@@ -16,6 +16,7 @@ public class ThreadServer implements Runnable {
 	private DataOutputStream writer;
 	private DataInputStream reader;
 	private int idClient;
+	private boolean isConnect;
 
 	public ThreadServer(Server server, Socket client) {
 
@@ -25,6 +26,7 @@ public class ThreadServer implements Runnable {
 		try {
 			writer = new DataOutputStream(client.getOutputStream());
 			reader = new DataInputStream(client.getInputStream());
+			isConnect = true;
 			System.out.println("A thread está cuidando do cliente na porta: " + client.getPort());
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -35,23 +37,26 @@ public class ThreadServer implements Runnable {
 	@Override
 	public void run() {
 
-		while (!this.client.isClosed()) {
+		while (isConnect) {
 			try {
 				String fromClient;
 				while (reader.available() != 0) {
 					fromClient = reader.readUTF();
-					System.out.println("Mensagem recebida do cliente: " + fromClient);
-					sendToAll(fromClient);
+					if (fromClient.equals("DESCONECTAR")) {
+						isConnect = false;
+					}else{
+						System.out.println("Mensagem recebida do cliente: " + fromClient);
+						sendToAll(fromClient);
+					}
 				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 		try {
-			client.close();
-			server.getListClient().remove(client);
+			server.remove(client);
 			sendToAll("O cliente" + this.idClient + " desconectou.");
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

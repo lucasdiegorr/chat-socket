@@ -31,6 +31,7 @@ public class ChatClient {
 	private JTextField textToSend;
 	private JTextArea textAreaChat;
 	private String nickName;
+	private JTextField textField;
 	/**
 	 * Launch the application.
 	 */
@@ -53,7 +54,6 @@ public class ChatClient {
 	 * Create the application.
 	 */
 	public ChatClient() {
-		nickName = JOptionPane.showInputDialog(null, "Qual o seu nick?");
 		initialize();
 	}
 
@@ -66,16 +66,23 @@ public class ChatClient {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosed(WindowEvent arg0) {
+			}
+			@Override
+			public void windowClosing(WindowEvent arg0) {
 				try {
+					client.sendMessage("DESCONECTAR");
+					new Thread(client).stop();
+					client.getWriter().close();
+					client.getReader().close();
 					client.getSocket().close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 			}
 		});
-		frame.setBounds(100, 100, 450, 300);
+		frame.setBounds(100, 100, 450, 360);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.setTitle("Chat - " + nickName);
+		frame.setTitle("Chat");
 		frame.getContentPane().setLayout(null);
 		
 		JButton btnEnviar = new JButton("Enviar");
@@ -88,11 +95,11 @@ public class ChatClient {
 				textToSend.requestFocus();
 			}
 		});
-		btnEnviar.setBounds(335, 228, 89, 23);
+		btnEnviar.setBounds(335, 287, 89, 23);
 		frame.getContentPane().add(btnEnviar);
 		
 		textToSend = new JTextField();
-		textToSend.setBounds(10, 229, 315, 23);
+		textToSend.setBounds(10, 288, 315, 23);
 		frame.getContentPane().add(textToSend);
 		textToSend.setColumns(10);
 		
@@ -105,8 +112,25 @@ public class ChatClient {
 		
 		JScrollPane scrollPane = new JScrollPane(textAreaChat);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);;
-		scrollPane.setBounds(10, 11, 414, 202);
+		scrollPane.setBounds(10, 69, 414, 202);
 		frame.getContentPane().add(scrollPane);
+		
+		textField = new JTextField();
+		textField.setBounds(10, 30, 216, 28);
+		frame.getContentPane().add(textField);
+		textField.setColumns(10);
+		
+		JButton bntConnect = new JButton("Conectar");
+		bntConnect.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		bntConnect.setBounds(236, 30, 89, 23);
+		frame.getContentPane().add(bntConnect);
+		
+		JButton bntDisconnect = new JButton("Sair");
+		bntDisconnect.setBounds(335, 30, 89, 23);
+		frame.getContentPane().add(bntDisconnect);
 	}
 
 	public JTextArea getTextAreaChat() {

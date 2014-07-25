@@ -38,7 +38,7 @@ public class Client implements Runnable {
 	@Override
 	public void run() {
 
-		while (socket.isConnected()) {
+		while ((!socket.isClosed()) && socket.isConnected()) {
 			String fromServer;
 			try {
 				
@@ -65,6 +65,14 @@ public class Client implements Runnable {
 
 	public Socket getSocket() {
 		return socket;
+	}
+
+	public DataOutputStream getWriter() {
+		return writer;
+	}
+
+	public DataInputStream getReader() {
+		return reader;
 	}
 	
 }

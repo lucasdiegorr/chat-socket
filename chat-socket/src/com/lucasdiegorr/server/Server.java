@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -38,5 +39,19 @@ public class Server {
 	
 	public List<Socket> getListClient() {
 		return listClient;
+	}
+
+	public void remove(Socket client) {
+		for (Socket remove : listClient) {
+			if (remove.equals(client)) {
+				try {
+					client.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				listClient.remove(client);
+				System.out.println("O cliente foi removido.");
+			}
+		}
 	}
 }
